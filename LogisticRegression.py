@@ -44,18 +44,14 @@ for params in tqdm(ParameterGrid(all_params)):
     
         clf = LogisticRegression(**params)
         clf.fit(train_x,train_y)
-        pred = clf.predict_proba(val_x)[:,1]
-        sc_logloss = log_loss(val_y,pred)
+        pred = clf.predict(val_x)
         sc_gini = gini(val_y,pred)
-
-        list_logloss_score.append(sc_logloss)
-        list_gini_score.append(sc_gini)
-       
         
-    sc_logloss = np.mean(list_logloss_score)
+        list_gini_score.append(sc_gini)
+        
     sc_gini = np.mean(list_gini_score)
     
-    if min_score < sc_gini:
+    if sc_gini < min_score:
         min_score = sc_gini
         min_params = params
         
@@ -70,7 +66,7 @@ df = pd.read_csv('test.csv')
 x_test = df
 
 
-pred_test = clf.predict_proba(x_test)[:,1]
+pred_test = clf.predict(x_test)
 
 df_submit = pd.read_csv(SAMPLE_SUBMIT_FILE)
 

@@ -28,25 +28,22 @@ df.describe()
 #欠損値確認
 df.isnull().sum()
 
+#出力は595212*59
+df.shape 
+
 x_train = df.drop('target',axis=1)
 y_train = df['target'].values
 
-param_range = [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]
-all_params = [{'svc_C':param_range, 'svc_kernel':['liner']},
-              {'svc_C':param_range, 'svc_gamma':param_range,
-               'svc_kernel':['rbf']}]
-pipe_svc = make_pipeline(StandardScaler(), SVC(random_state=0))
+# param_range = [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]
+param_range = [0.1]
+all_params = {'C':param_range, 
+              'kernel':['linear','rbf'],
+              'gamma':param_range
+             }
 
-gs = GridSearchCV(estimator=pipe_svc,
-                  param_grid=all_params,
-                  scoring='accuracy',
-                  cv=2)
-scores = cross_val_score(gs,
-                         x_train,
-                         y_train,
-                         scoring='accuracy',
-                         cv=5)
-print('CV accuracy: {:.3f} +/- {:.3f}'.format(np.mean(scores), np.std(scores)))
+scaler = StandardScaler()
+scaler.fit(x_train)
+scaler.transform(x_train)
 
 
 pipe_svc.fit(x_train,y_train)
